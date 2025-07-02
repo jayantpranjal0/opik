@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import { Database, Trash } from "lucide-react";
+import { Database, Trash, MessageSquare } from "lucide-react";
 import first from "lodash/first";
 import get from "lodash/get";
 import slugify from "slugify";
@@ -9,6 +9,7 @@ import { Span, Trace } from "@/types/traces";
 import { COLUMN_FEEDBACK_SCORES_ID } from "@/types/shared";
 import { TRACE_DATA_TYPE } from "@/hooks/useTracesOrSpansList";
 import AddToDatasetDialog from "@/components/pages-shared/traces/AddToDatasetDialog/AddToDatasetDialog";
+import BulkAnnotationDialog from "@/components/pages-shared/traces/BulkAnnotationDialog/BulkAnnotationDialog";
 import ConfirmDialog from "@/components/shared/ConfirmDialog/ConfirmDialog";
 import useTracesBatchDeleteMutation from "@/api/traces/useTraceBatchDeleteMutation";
 import TooltipWrapper from "@/components/shared/TooltipWrapper/TooltipWrapper";
@@ -86,9 +87,16 @@ const TracesActionsPanel: React.FunctionComponent<TracesActionsPanelProps> = ({
         open={open === 1}
         setOpen={setOpen}
       />
+      <BulkAnnotationDialog
+        key={`annotate-${resetKeyRef.current}`}
+        open={open === 2}
+        setOpen={setOpen}
+        selectedTraces={rows}
+        projectName={projectName}
+      />
       <ConfirmDialog
         key={`delete-${resetKeyRef.current}`}
-        open={open === 2}
+        open={open === 3}
         setOpen={setOpen}
         onConfirm={deleteTracesHandler}
         title="Delete traces"
@@ -110,6 +118,22 @@ const TracesActionsPanel: React.FunctionComponent<TracesActionsPanelProps> = ({
           Add to dataset
         </Button>
       </TooltipWrapper>
+      {type === TRACE_DATA_TYPE.traces && (
+        <TooltipWrapper content="Bulk annotate">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setOpen(2);
+              resetKeyRef.current = resetKeyRef.current + 1;
+            }}
+            disabled={disabled}
+          >
+            <Database className="mr-2 size-4" />
+            Bulk annotate
+          </Button>
+        </TooltipWrapper>
+      )}
       <ExportToButton
         disabled={disabled || columnsToExport.length === 0}
         getData={mapRowData}
@@ -121,7 +145,7 @@ const TracesActionsPanel: React.FunctionComponent<TracesActionsPanelProps> = ({
             variant="outline"
             size="icon-sm"
             onClick={() => {
-              setOpen(2);
+              setOpen(3);
               resetKeyRef.current = resetKeyRef.current + 1;
             }}
             disabled={disabled}

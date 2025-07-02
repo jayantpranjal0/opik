@@ -86,6 +86,20 @@ export interface AgentGraphData {
   data: string;
 }
 
+export interface FeedbackScoreBatchItem {
+  id: string;
+  projectName?: string;
+  name: string;
+  categoryName?: string;
+  value: number;
+  reason?: string;
+  source: FEEDBACK_SCORE_TYPE;
+}
+
+export interface FeedbackScoreBatch {
+  scores: FeedbackScoreBatchItem[];
+}
+
 export interface Thread {
   id: string;
   project_id: string;
